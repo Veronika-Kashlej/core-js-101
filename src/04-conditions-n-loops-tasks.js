@@ -1,3 +1,4 @@
+// prettier-ignore
 /* *************************************************************************************************
  *                                                                                                *
  * Please read the following tutorial before implementing tasks:                                   *
@@ -159,9 +160,12 @@ function doRectanglesOverlap(/* rect1, rect2 */) {
  *   { center: { x:0, y:0 }, radius:10 },  { x:10, y:10 }   => false
  *
  */
-function isInsideCircle(/* circle, point */) {
-  throw new Error('Not implemented');
-}
+// function isInsideCircle(circle, point) {
+//   const d = Math.sqrt(
+//     (point.x - circle.center.x) ** 2 + (point.y - circle.center.y) ** 2
+//   );
+//   return d < circle.radius;
+// }
 
 /**
  * Returns the first non repeated char in the specified strings otherwise returns null.
@@ -263,8 +267,27 @@ function reverseInteger(num) {
  *   5436468789016589 => false
  *   4916123456789012 => false
  */
-function isCreditCardNumber(/* ccn */) {
-  throw new Error('Not implemented');
+function isCreditCardNumber(ccn) {
+  const reverseNumber = ccn.toString().split('').reverse();
+  let sum1 = 0;
+  let sum2 = 0;
+
+  for (let i = 0; i < reverseNumber.length; i += 1) {
+    let symbol = +reverseNumber[i];
+    if (i % 2 === 0) {
+      sum2 += symbol;
+    } else {
+      symbol *= 2;
+      if (symbol > 9) {
+        symbol -= 9;
+      }
+      sum1 += symbol;
+    }
+  }
+
+  const totalSum = sum1 + sum2;
+  const calculatedControlNumber = totalSum % 10;
+  return calculatedControlNumber === 0;
 }
 
 /**
@@ -354,8 +377,9 @@ function toNaryString(num, n) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  console.log(...pathes);
+  return pathes.join('/');
 }
 
 /**
@@ -430,7 +454,7 @@ module.exports = {
   getSumBetweenNumbers,
   isTriangle,
   doRectanglesOverlap,
-  isInsideCircle,
+  // isInsideCircle,
   findFirstSingleChar,
   getIntervalString,
   reverseString,
