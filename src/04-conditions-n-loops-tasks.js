@@ -130,8 +130,15 @@ function isTriangle(a, b, c) {
  *   { top:20, left:20, width: 20, height: 20 }    =>  false
  *
  */
-function doRectanglesOverlap(/* rect1, rect2 */) {
-  throw new Error('Not implemented');
+function doRectanglesOverlap(rect1, rect2) {
+  const rigth1 = rect1.left + rect1.width;
+  const rigth2 = rect2.left + rect2.width;
+  const bottom1 = rect1.top + rect1.height;
+  const bottom2 = rect2.top + rect2.height;
+  if (rigth1 < rect2.left || rigth2 < rect1.left || bottom1 < rect2.top || bottom2 < rect1.top) {
+    return false;
+  }
+  return true;
 }
 
 /**
@@ -160,12 +167,12 @@ function doRectanglesOverlap(/* rect1, rect2 */) {
  *   { center: { x:0, y:0 }, radius:10 },  { x:10, y:10 }   => false
  *
  */
-// function isInsideCircle(circle, point) {
-//   const d = Math.sqrt(
-//     (point.x - circle.center.x) ** 2 + (point.y - circle.center.y) ** 2
-//   );
-//   return d < circle.radius;
-// }
+function isInsideCircle(circle, point) {
+  const d = Math.sqrt(
+    (point.x - circle.center.x) ** 2 + (point.y - circle.center.y) ** 2,
+  );
+  return d < circle.radius;
+}
 
 /**
  * Returns the first non repeated char in the specified strings otherwise returns null.
@@ -337,8 +344,25 @@ function getDigitalRoot(num) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  const openBrackets = ['[', '{', '(', '<'];
+  const pair = new Map([['[', ']'], ['{', '}'], ['(', ')'], ['<', '>']]);
+  const stack = [];
+  for (let i = 0; i < str.length; i += 1) {
+    if (openBrackets.includes(str[i])) {
+      stack.push(str[i]);
+    } else {
+      if (stack.length === 0) {
+        return false;
+      }
+      if (str[i] === pair.get(stack[stack.length - 1])) {
+        stack.pop();
+      } else {
+        return false;
+      }
+    }
+  }
+  return stack.length === 0;
 }
 
 /**
@@ -378,7 +402,19 @@ function toNaryString(num, n) {
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
 function getCommonDirectoryPath(pathes) {
-  return pathes.join('/');
+  const splitPathes = pathes.map((x) => x.split('/'));
+  const minLength = splitPathes.reduce((min, cur) => Math.min(min, cur.length), Infinity);
+  let path = '';
+  for (let i = 0; i < minLength; i += 1) {
+    const curPath = splitPathes[0][i];
+    for (let j = 1; j < splitPathes.length; j += 1) {
+      if (splitPathes[j][i] !== curPath) {
+        return path;
+      }
+    }
+    path += `${curPath}/`;
+  }
+  return path || '';
 }
 
 /**
@@ -399,8 +435,18 @@ function getCommonDirectoryPath(pathes) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  const rowsA = m1.length;
+  const colsB = m2[0].length;
+  const arr = Array.from({ length: rowsA }, () => Array(colsB).fill(0));
+  for (let i = 0; i < rowsA; i += 1) {
+    for (let j = 0; j < colsB; j += 1) {
+      for (let k = 0; k < m1[0].length; k += 1) {
+        arr[i][j] += m1[i][k] * m2[k][j];
+      }
+    }
+  }
+  return arr;
 }
 
 /**
@@ -433,19 +479,33 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-// function evaluateTicTacToePosition(position) {
-//   for (let i = 0; i < 3; i += 1) {
-//     for (let j = 0; j < 3; j += 1) {
-//       if (
-//         position[i][j] === position[i][j + 1] &&
-//         position[i][j] === position[i][j + 2]
-//       ) {
-//         return position[i][j];
-//       }
-//     }
-//   }
-//   return undefined;
-// }
+function evaluateTicTacToePosition(position) {
+  for (let i = 0; i < 3; i += 1) {
+    if (position[i][0] && position[i][0] === position[i][1]
+      && position[i][0] === position[i][2]) {
+      return position[i][0];
+    }
+    if (position[0][i] && position[0][i] === position[1][i]
+      && position[0][i] === position[2][i]) {
+      return position[0][i];
+    }
+  }
+  for (let i = 0; i < 3; i += 1) {
+    if (position[0][i] === position[1][i]
+      && position[0][i] === position[2][i]) {
+      return position[0][i];
+    }
+  }
+  if (position[0][0] === position[1][1]
+    && position[0][0] === position[2][2]) {
+    return position[0][0];
+  }
+  if (position[0][2] === position[1][1]
+    && position[0][2] === position[2][0]) {
+    return position[0][2];
+  }
+  return undefined;
+}
 
 module.exports = {
   getFizzBuzz,
@@ -453,7 +513,7 @@ module.exports = {
   getSumBetweenNumbers,
   isTriangle,
   doRectanglesOverlap,
-  // isInsideCircle,
+  isInsideCircle,
   findFirstSingleChar,
   getIntervalString,
   reverseString,
@@ -464,5 +524,5 @@ module.exports = {
   toNaryString,
   getCommonDirectoryPath,
   getMatrixProduct,
-  // evaluateTicTacToePosition,
+  evaluateTicTacToePosition,
 };
